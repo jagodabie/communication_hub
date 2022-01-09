@@ -1,0 +1,11 @@
+.alert-container{
+    width: 25rem;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 1;
+}
+.alert-container :first-child :first-child{
+    padding:  10px;
+}
+
+

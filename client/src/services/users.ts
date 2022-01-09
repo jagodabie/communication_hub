@@ -7,25 +7,20 @@ class UsersDataService {
     return origin.get<Array<IUser>>("/users");
   }
 
- getUser = (id: string) =>  {
+ getUser (id: string) {
     return origin.get<IUser>(`/users/${id}`);
   }
 
- creteUser = (data: IUser)=> {
+ creteUser (data: IUser) {
     return origin.post<IUser>("/users", data);
   }
 
- updateUser = (data: IUser, id: number) => {
+ updateUser (data: IUser, id: any) {
     return origin.put<any>(`/users/${id}`, data);
   }
 
- deleteUser = (id: number) =>  {
-    return origin.delete<any>(`/users/${id}`);
+ deleteUser (id: number) {
+    return origin.delete<any>(`/users/${id}`); 
+ }
 }
-}
-/*
-findByTitle(title: string) {
-  return origin.get<Array<IUser>>(`/users?name=${name}`);
-}
-*/
 export  default new UsersDataService();

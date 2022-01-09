@@ -20,8 +20,8 @@
     display: inline-block;
     border-radius: 50%;
     padding-top: px;
-    height: 7rem;
-    width: 7rem;
+    height: 4rem;
+    width: 4rem;
 }
 .user-action{
     padding-top: 3rem;
@@ -29,6 +29,6 @@
     font-size: 2rem;
 }
 .fill-div{
-padding: 1.5rem;    
+padding: 1.7em;    
 
 }

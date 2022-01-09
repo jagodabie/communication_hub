@@ -1,14 +1,16 @@
-import {useState,useEffect} from 'react';
+import {useState,useEffect,FC} from 'react';
 import User from './User';
 import { IUser } from '../../interfaces/user';
 import UsersDataService  from '../../services/users';
+import { useHistory } from 'react-router-dom';
+import { Alerts } from '../ui/layout/Alerts';
 
-
-
-const Users =()=>{
-    const[Users,setUsers] = useState([] as IUser[]);
-    const [id, setId] = useState<number|null>(null);
-
+  const Users: FC = () =>{
+    const[users,setUsers] = useState([] as IUser[]);
+    const[showAlert,setShowAlert] = useState<boolean>(false);
+    const[successAlert,setSuccessAlert] = useState<boolean>(false);
+    // TO DO add global store
+    let history =useHistory();
     const getUsers =() => {
         UsersDataService.getAllUsers()
         .then((response: any)=> {
@@ -19,12 +21,39 @@ const Users =()=>{
             console.log(e);
         });
     }
-  
+    const handleShowAlert = () =>{
+        setShowAlert(!showAlert);
+    }
+    const deleteUserfromList = (id: number)=>{
+        UsersDataService.deleteUser(id)
+        .then(({data}: any)=> {
+            setUsers(users.filter((item:IUser)=> item.id !== id));
+            setShowAlert(true);
+            setSuccessAlert(true);
+        })
+        .catch((e: Error) => {
+            console.log(e);
+            setShowAlert(true);
+            setSuccessAlert(false)
+        })
+
+    }
+    const editUser = (id:number)=>{
+        history.push(`/editUser/${id}`)
+    } 
     useEffect(()=>getUsers(), [])
     
     return(
         <div className="users">
-            { Users ? Users.map((item)=><User id={item.id} login={item.login} password={item.password} name={item.name} surname={item.name} job={item.job} photo={item.photo} isSuperUser={item.isSuperUser} isSuperUser_display={item.isSuperUser_display}/>):null}
+           {showAlert? <Alerts successAlert={successAlert} handleShowAlert={handleShowAlert} showAlert={showAlert}/>:null}
+            { users ? users.map((item)=>(
+                <User 
+                    key={item.id} 
+                    user={item} 
+                    deleteUserfromList={deleteUserfromList}
+                    editUser={editUser}
+                />
+                )):null }
         </div>
     )
 }

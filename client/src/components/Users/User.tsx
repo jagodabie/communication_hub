@@ -1,25 +1,14 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import it  from'../../photo/it.png';
 import '../../css/User.css';
 import { IUser } from '../../interfaces/user';
 
-import UsersDataService  from '../../services/users';
-
-  const User: FC<IUser> = ({ id, login, password, name, surname, job, photo ,isSuperUser ,isSuperUser_display }) => {
-    const handleDeleteUser = () => {
-      UsersDataService.deleteUser(id)
-        .then((response: any)=> {
-          console.log(id+"delete")
-            
-        })
-        .catch((e: Error) => {
-            console.log(e);
-        });
-    }
-    const handleEditUser = () => {
-     
-    }
-    
+type Props = {
+    user: IUser,
+    deleteUserfromList: (id: number) => void;
+    editUser: (id: number) => void;
+}
+  const User: FC<Props> = ({ user,deleteUserfromList,editUser }) => {   
     return(
      <div className = "user-field">
         <div className="user-icon">
@@ -29,16 +18,16 @@ import UsersDataService  from '../../services/users';
         </div>
           <div className="user-name">
             Imię i nazwisko<br/>
-            <strong>{name} {surname} </strong>
+            <strong>{user.name} {user.surname} </strong>
             <br/>
             Stanowisko<br/>
-            <strong>{job}</strong><br/>
+            <strong>{user.job}</strong><br/>
             Poziom uprawnień w aplikacji<br/>
-            <strong>{ isSuperUser ?"Administrator Sytemu":"Użytkownik zwyczajny" }</strong>
+            <strong>{ user.isSuperUser ?"Administrator Sytemu":"Użytkownik zwyczajny" }</strong>
           </div>
           <div className = "user-action">
-            <i className="far fa-trash-alt" onClick={handleDeleteUser}></i>
-            <i className="far fa-edit"></i>
+            <i className="far fa-trash-alt" onClick={()=>deleteUserfromList(user.id)}></i>
+            <i className="far fa-edit" onClick={()=>editUser(user.id)}></i>
           </div>
       </div>   
     )

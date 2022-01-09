@@ -1,12 +1,14 @@
 export interface IUser {
     id:number,
-    login:string,
+    name: string,
+    surname: string,
+    login: string,
+    job: string,
     password: string,
-    name:string,
-    surname:string,
-    job:string,
-    photo:string,
+    confirmPassword?: string,
     isSuperUser: boolean,
-    isSuperUser_display: string
+    isSuperUser_display: string,
+    file: string,
+    createdAt?: string;
    }
    

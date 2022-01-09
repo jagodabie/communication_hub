@@ -1,19 +1,14 @@
-import  { FC } from 'react';
+import  { FC, useEffect, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { IUser } from '../../interfaces/user';
 import * as yup from "yup";
+import { useParams } from 'react-router-dom';
+import UsersDataService  from '../../services/users';
 
-
-interface IFormInputs {
-  name: string,
-  surname: string,
-  login: string,
-  job: string,
-  password: string,
-  confirmPassword: string,
-  isSuperUsers: boolean,
-  file: {}
+interface RouteParams {
+  id: string;
 }
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -22,20 +17,33 @@ const schema = yup.object().shape({
   job: yup.string().min(4).max(15).required(),
   password: yup.string().required(),
   confirmPassword: yup.string().oneOf([yup.ref("password"), null]),
-  isSuperUsers: yup.boolean().required(),
-  file: yup.mixed().required('You need to provide a photo')
+  isSuperUser: yup.boolean().required(),
+  file: yup.string().required('You need to provide a photo')
 });
 
-export const Form : FC<IFormInputs> = ({name, surname ,login,job ,password ,confirmPassword,isSuperUsers,file}) =>  {  
-  const { register, handleSubmit, formState: { errors }} = useForm<IFormInputs>({
+export const  UsersForm : FC = () =>  {  
+  const[ user, setUser ] = useState<IUser | null>(null);
+  const { register, handleSubmit, formState: { errors }} = useForm<IUser>({
     resolver: yupResolver(schema),
   });
-  const onSubmit = (data: IFormInputs) => console.log(data);
+ const params = useParams<RouteParams>();
+
+ const createUser = (data: IUser) => {
+  UsersDataService.creteUser(data)
+}
+const updateUser = (data: IUser) =>{
+  UsersDataService.updateUser(data, params.id)
+}
+const service = params.id ? updateUser : createUser;
+
+useEffect(()=>{ UsersDataService.getUser(params.id)
+              .then(({data})=> setUser(data))},[])
+
   return (
       <div className="Form">
       <div className="title">Create User</div>
       <div className="inputs">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(service)}>
         <label htmlFor="name" className="form-input__label">Name</label>
           <input
             {...register("name")} 
@@ -100,11 +108,11 @@ export const Form : FC<IFormInputs> = ({name, surname ,login,job ,password ,conf
         <input
             type="checkbox"
             id="form-input__checkbox"
-            {...register("isSuperUsers")} 
+            {...register("isSuperUser")} 
         />
         <ErrorMessage
             errors={errors}
-            name="isSuperUsers"
+            name="isSuperUser"
             render={({ message }) => <p className = "error">{message}</p>}
         />
         <input
